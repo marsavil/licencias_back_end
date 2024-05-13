@@ -4,6 +4,7 @@ const router = Router();
 
 router.post('/', sectores.cargar);
 router.get('/', sectores.ver);
-router.delete('/', sectores.eliminar)
+router.delete('/', sectores.eliminar);
+router.put('/', sectores.activar);
 
 export default router;
