@@ -14,7 +14,9 @@ const medicos = {
       const verify = await Medico.find({ dni })
       // verifica si el médico a ingresar ya estuvo registrado
       if ( verify.length && verify[0].name === name && verify[0].surname === surname && verify[0].active === false ){
-        verify[0].active = true
+        verify[0].active = true,
+        verify[0].lastModified.by = adminDB._id,
+        verify[0].lastModified.date = Date.now()
         verify[0].save()
         return res.status(200).send( {message:"Profesional médico re habilitado exitosamente", data: verify});
       }
@@ -56,12 +58,15 @@ const medicos = {
   eliminar: async function (req: Request, res: Response) {
     // Elimina una médico. Borrado Lógico
     try {
-      const { id } = req.body;
+      const { id, admin } = req.body;
       if ( id ) {
         const medico = await Medico.findById( id );
+        const adminDB = await Admin.findById(admin);
         if ( medico ) {
           console.log("este es el medico", medico);
           medico.active = false
+          medico.lastModified.by = adminDB._id;
+          medico.lastModified.date = Date.now();
           medico.save()
           return res.status(200).send({message:"médico eliminado", data: medico});
         } else {
