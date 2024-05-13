@@ -17,9 +17,18 @@ const employeeSchema = new mongoose.Schema({
             ref: 'Permit'
         }
     ],
-    active: { type: Boolean, required: true }
+    active: { type: Boolean, required: true },
+    lastModified: {
+        by: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Admin'
+        },
+        date: {
+          type: Date,
+          default: Date.now()
+        }
+      }
 });
-console.log(mongoose.models)
 const Employee = mongoose.models.Employee || mongoose.model("Employee", employeeSchema);
 // const Employee = mongoose.model("Employee", employeeSchema);
 export default Employee;

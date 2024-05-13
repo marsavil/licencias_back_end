@@ -4,6 +4,6 @@ const router = Router();
 
 router.post('/', medicos.cargar);
 router.get('/', medicos.ver);
-router.delete('/', medicos.eliminar)
+router.put('/', medicos.eliminar)
 
 export default router;

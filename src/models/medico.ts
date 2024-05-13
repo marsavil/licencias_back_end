@@ -11,11 +11,12 @@ const medicoSchema = new mongoose.Schema({
     lastModified: {
       by: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Admin'
+        ref: 'Admin',
+        required: true,
       },
       date: {
         type: Date,
-        default: Date.now
+        default: Date.now()
       }
     }
 });
