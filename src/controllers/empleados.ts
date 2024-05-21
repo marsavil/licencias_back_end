@@ -75,8 +75,9 @@ const empleados = {
       }
     }
     const empleados = await Employee.find();
+    const activos = empleados.filter((e) => e.active)
     return res.status(200).send({
-      resumen: `Existen ${empleados.length} empleados registrados`,
+      resumen: `Existen ${activos.length} empleado activos sobre ${empleados.length} empleados registrados`,
       empleados: empleados,
     });
   },
