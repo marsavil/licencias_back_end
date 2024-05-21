@@ -1,18 +1,14 @@
-import { Sequelize, DataTypes, Model } from 'sequelize';
-
-export default function defineModel(sequelize: Sequelize) {
-  sequelize.define("documentacion", {
-    id: {
-      type: DataTypes.UUID,
-      defaultValue: DataTypes.UUIDV4,
-      primaryKey: true,
-    },
+import mongoose from "mongoose";
+const documentSchema = new mongoose.Schema({
     path: {
-      type: DataTypes.STRING,
+      type: String,
       allowNull: false,
     },
     licenciaID:{
-      type: DataTypes.UUID,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Document'
     },
   });
-};
+  const Document = mongoose.models.Document || mongoose.model("Document", documentSchema);
+  // const Document = mongoose.model("Document", documentSchema);
+  export default Document;

@@ -44,7 +44,8 @@ const sectores = {
   ver: async function (req: Request, res: Response) {
     // devuelve un array con los sectores cargados
     const sectores = await Sector.find();
-    return res.status(200).send(sectores);
+    const activos = sectores.filter(s => s.active === true);
+    return res.status(200).send({resumen: `Existen ${activos.length} sectores activos sobre un total de ${sectores.length}`,sectores:sectores});
   },
   eliminar: async function (req: Request, res: Response) {
     try {
@@ -65,6 +66,19 @@ const sectores = {
       if ( id ) {
         const sector = await Sector.updateOne({_id: id}, {active: true});
         return res.status(200).send("sector activado");
+      } else {
+        return res.status(400).send("Debe ingresar un id valido para activar un sector");
+      }
+    } catch (error: any) {
+      return res.status(400).send(error.message);
+    }
+  },
+  desactivar: async function (req: Request, res: Response) {
+    try {
+      const { id } = req.body;
+      if ( id ) {
+        const sector = await Sector.updateOne({_id: id}, {active: false});
+        return res.status(200).send("sector desactivado");
       } else {
         return res.status(400).send("Debe ingresar un id valido para activar un sector");
       }

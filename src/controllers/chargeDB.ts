@@ -107,7 +107,7 @@ const charge = {
           date: Date.now()
         }
       })
-      console.log("Empleado agreagado correctamente");
+      console.log("Empleado agregado correctamente");
     } else {
       console.log(`Ya existe el empleado con el id ${employees[i].id}`)
     }

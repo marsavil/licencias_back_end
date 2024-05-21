@@ -4,6 +4,6 @@ const router = Router();
 
 router.post('/', empleados.cargar);
 router.get('/', empleados.ver);
-router.delete('/', empleados.eliminar);
+router.put('/', empleados.eliminar);
 
 export default router;

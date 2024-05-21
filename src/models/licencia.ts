@@ -1,53 +1,50 @@
-import { Sequelize, DataTypes, Model } from 'sequelize';
-
-export default function defineModel(sequelize: Sequelize) {
-  sequelize.define("licencia", {
-    id: {
-      type: DataTypes.UUID,
-      defaultValue: DataTypes.UUIDV4,
-      primaryKey: true,
-    },
+import mongoose from "mongoose";
+const permitSchema = new mongoose.Schema({
     empleadoId: {
-      type: DataTypes.UUID,
-      allowNull: false,
-    },
-    empresaId: {
-      type: DataTypes.UUID,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Employee',
       allowNull: false,
     },
     sectorId: {
-      type: DataTypes.UUID,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Sector',
       allowNull: false
     },
     direccion: {
-      type: DataTypes.STRING,
+      type: String,
       allowNull: false,
     },
     coordenadas: {
-      type: DataTypes.STRING
+      type: String
     },
     medicoId: {
-      type: DataTypes.UUID,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Permit',
     },
     solicitada: {
-      type: DataTypes.DATE,
-      allowNull: false,
+      type: Date,
+      default: Date.now()
     },
     revisada: {
-      type: DataTypes.DATE,
+      type: Date,
     },
     otorgada:{
-      type: DataTypes.BOOLEAN,
+      type: Boolean,
     },
     validez:{
-      type: DataTypes.ENUM("24", "48", "72"), // según propositos de la empresa,
+      type: String,
+      enum: ["24", "48", "72"], // según propositos de la empresa,
     },
     derivacion:{
-      type: DataTypes.BOOLEAN,
+      type: Boolean,
+      default: false,
     },
     documentacionId: {
-    type: DataTypes.UUID,
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Document',
     allowNull: false,
     }
   });
-};
+  const Permit = mongoose.models.Permit || mongoose.model("Permit", permitSchema);
+  // const Permit = mongoose.model("Permit", permitSchema);
+  export default Permit;
