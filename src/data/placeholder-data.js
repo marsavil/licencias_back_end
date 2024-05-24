@@ -1,23 +1,24 @@
-const admins = [{
-  id: '7ab7008d-354f-492c-858e-87b7dc6908f2',
-  surname: 'One',
-  name: 'Admin',
-  dni: '987456321',
-  telephone: '1234567890',
-  password: '987456321',
-  level: 'High',
-  active: true,
-},
-{
-  id:"88e328d6-13b3-4c90-9bb6-53e54d9d82ed",
-  surname: "system",
-  name: "System",
-  dni: "00000000",
-  telephone: "00000000",
-  password: "00000000",
-  level: "High",
-  active: false,
-}]
+const sysAdmin = [
+  {
+    id: "88e328d6-13b3-4c90-9bb6-53e54d9d82ed",
+    surname: "system",
+    name: "System",
+    password: "00000000",
+    level: "High",
+    active: true,
+  }]
+const admins = [
+  {
+    id: '7ab7008d-354f-492c-858e-87b7dc6908f2',
+    surname: 'One',
+    name: 'Admin',
+    dni: '987456321',
+    telephone: '1234567890',
+    password: '987456321',
+    level: 'High',
+    active: true,
+  }
+]
 
 const employees = [
   {
@@ -26,14 +27,14 @@ const employees = [
     name: 'User',
     dni: '12345678',
     telephone: '1234567890',
-    sector:'Logística',
+    sector: 'Logística',
     password: '12345678',
     discharged: true,
     level: 'Low',
     active: true,
-    lastModified:{
-        by: '',
-        date:'',
+    lastModified: {
+      by: '',
+      date: '',
     },
   },
   {
@@ -42,14 +43,14 @@ const employees = [
     name: 'User',
     dni: '123456789',
     telephone: '1234567890',
-    sector:'Taller',
+    sector: 'Taller',
     password: '123456789',
     alta: true,
     level: 'Low',
     active: true,
-    lastModified:{
-        by: '',
-        date:'',
+    lastModified: {
+      by: '',
+      date: '',
     },
   },
   {
@@ -58,14 +59,14 @@ const employees = [
     name: 'User',
     dni: '123123456',
     telephone: '1234567890',
-    sector:'Administración',
+    sector: 'Administración',
     password: '123123456',
     alta: true,
     level: 'Low',
     active: true,
-    lastModified:{
-        by: '',
-        date:'',
+    lastModified: {
+      by: '',
+      date: '',
     },
   },
 ];
@@ -89,7 +90,7 @@ const sectors = [
     employess: []
   },
 ]
-const  medicos = [
+const medicos = [
   {
     id: 'd1c02f85-dbfd-489c-a225-9ec19963d020',
     surname: 'One',
@@ -99,9 +100,9 @@ const  medicos = [
     password: '12345456',
     level: 'Mid',
     active: true,
-    lastModified:{
-        by: '',
-        date:'',
+    lastModified: {
+      by: '',
+      date: '',
     },
   },
   {
@@ -113,13 +114,14 @@ const  medicos = [
     password: '789456456',
     level: 'Mid',
     active: true,
-    lastModified:{
-        by: '',
-        date:'',
+    lastModified: {
+      by: '',
+      date: '',
     },
   },
 ]
 module.exports = {
+  sysAdmin,
   admins,
   employees,
   sectors,
