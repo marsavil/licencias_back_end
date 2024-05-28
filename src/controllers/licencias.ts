@@ -1,12 +1,13 @@
 import { Request, Response } from "express";
-const {
-  Empleado,
-  Empresa,
-  Licencia,
-  Sector,
-  Documentacion,
-  Medico,
-} = require("../db");
+import Employee from "../models/empleado";
+import Document from "../models/documentacion";
+import Permit from  "../models/licencia";
+import Sector from "../models/sector";
+import dotenv from 'dotenv';
+
+dotenv.config();
+
+
 const { CONSULTA } = process.env;
 
 const licencias = {
@@ -15,29 +16,22 @@ const licencias = {
       nombre,
       apellido,
       sector,
-      empresa,
       telefono,
       direccion,
       coordenadas,
       documentacion,
+      id
     } = req.body;
     try {
       // Primera verificación de datos ingresados
 
       if (!nombre || !apellido) {
-        return res.status(400).send("Debe ingresar su nombre");
+        return res.status(400).send("Debe ingresar su nombre y apellido");
       }
       if (!sector) {
         return res
           .status(400)
           .send("Debe indicar el sector donde se desempeña");
-      }
-      if (!empresa) {
-        return res
-          .status(400)
-          .send(
-            "Debe ingresar el nombre de la empresa ante la cual solicita su licencia"
-          );
       }
       if (!telefono) {
         return res.status(400).send("Debe ingresar su número de teléfono");
@@ -50,70 +44,60 @@ const licencias = {
 
       // Consulta de datos
 
-      const solicitante = await Empleado.findOne({
-        where: {
-          name: nombre,
-          surname: apellido,
-        },
-      });
-      const cliente = await Empresa.findOne({
-        where: {
-          name: empresa,
-        },
-      });
-      console.log("este es id que hay que adjuntara a la licencia",cliente.id)
-      const seccion = await Sector.findOne({
-        where: {
+      const solicitante = await Employee.findById(id);
+      const sectorDB =  await Sector.findById(solicitante.sector); 
+      const seccion = await Sector.find({
           name: sector,
-        },
       });
       //Segunda verificación
 
-      if (!solicitante)
+      if (solicitante.name  !== nombre || solicitante.surname !== apellido )
         return res
           .status(400)
           .send(
-            `${nombre} ${apellido} no se encuentra en nuestra base de datos. Verifique los datos ingresados y vuelva a intentarlo. Si el problema persiste comuniquese telefóicamente a ${CONSULTA}`
+            `El nombre ${nombre} ${apellido} no coincide con el nombre del usuario actual . Verifique los datos ingresados y vuelva a intentarlo. Si el problema persiste comuniquese telefóicamente a ${CONSULTA}`
           );
-
-      if (!cliente)
+      if (!seccion.length)
         return res
           .status(400)
           .send(
-            "La empresa ingresada no existe en nuestra base de datos. Verifique los datos ingresado y vuelva a intentarlo"
+            `El sector ${sector} no existe en nuestra base de datos. ¿Quiso ingresar ${sectorDB.name}?` 
           );
-
-      if (!seccion)
+      if (sectorDB.name !== sector )
         return res
-          .status(400)
-          .send(
-            "El sector ingresado no existe en nuestra base de datos. Verifique los datos ingresados y vuelva a intentarlo"
+         .status(400)
+         .send(
+            `El sector ${sector} no coincide con el sector del usuario actual. Verifique los datos ingresados y vuelva a intentarlo. Si el problema persiste comuniquese telefóicamente a ${CONSULTA}`
           );
+      if (solicitante.telephone!== telefono)
+      
 
       // Registro en base de datos de la nueva licencia
       console.log("se va a crear la documentacion");
-      const nuevaDocumentacion = await Documentacion.create({
+      const nuevaDocumentacion = await Document.create({
         path: documentacion,
       });
+      const documentDB = await Document.find({ path:  documentacion})
       console.log("guardo la documentacion", nuevaDocumentacion);
-      const nuevaLicencia = await Licencia.create({
-        empleadoId: solicitante.id,
-        empresaId: cliente.id,
-        sectorId: seccion.id,
+      const nuevaLicencia = await Permit.create({
+        empleadoId: solicitante._id,
+        sectorId: sectorDB._id,
         solicitada: new Date(),
         direccion,
         coordenadas,
-        documentacionId: nuevaDocumentacion.id,
+        documentacionId: documentDB[0]._id,
       });
-      nuevaDocumentacion.licenciaID = nuevaLicencia.id;
-      nuevaDocumentacion.save();
-      solicitante.telefono = telefono;
+      const licenciaDB = await Permit.find({documentacionId: documentDB[0]._id})
+      documentDB[0].licenciaID = licenciaDB[0]._id;
+      documentDB[0].save();
+      solicitante.telephone = telefono;
+      solicitante.permits.push(licenciaDB[0]._id)
       solicitante.save();
       res
         .status(200)
         .send({
           message:
-            "Hemos recibido su solicitud. Será contactado por un profesional en las próximas horas",
+            "Hemos recibido su solicitud. Será contactado por un profesional a la brevedad",
         });
     } catch (error: any) {
       return res.send(error.message);
@@ -123,11 +107,7 @@ const licencias = {
     try {
       const { id } = req.body;
     if (id) {
-      const licencia = await Licencia.findOne({
-        where: {
-          id,
-        },
-      });
+      const licencia = await Permit.findById( id );
       if (!licencia) {
         return res
           .status(400)
@@ -136,8 +116,9 @@ const licencias = {
         return res.status(200).send(licencia);
       }
     } else {
-      const licencias = await Licencia.findAll();
-      return res.status(200).send(licencias)
+      const licencias = await Permit.find();
+      const resueltas = await Permit.find({otorgada: true || false})
+      return res.status(200).send({resumen: `Existen ${licencias.length} solicitudes de licencia registradas, de las cuales ${resueltas.length} fueron resuletas`,data:licencias})
     }
     } catch (error: any) {
       return res.status(500).send(error.message)

@@ -15,7 +15,8 @@ const permitSchema = new mongoose.Schema({
       allowNull: false,
     },
     coordenadas: {
-      type: String
+      x: { type: String},
+      y: { type: String}
     },
     medicoId: {
       type: mongoose.Schema.Types.ObjectId,

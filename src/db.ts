@@ -1,7 +1,4 @@
 import dotenv from 'dotenv';
-import { Sequelize } from 'sequelize';
-import fs from 'fs';
-import path from 'path';
 import mongoose from "mongoose";
 
 dotenv.config();
