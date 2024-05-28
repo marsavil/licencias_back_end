@@ -65,8 +65,8 @@ const licencias = {
           );
       if (sectorDB.name !== sector )
         return res
-         .status(400)
-         .send(
+          .status(400)
+          .send(
             `El sector ${sector} no coincide con el sector del usuario actual. Verifique los datos ingresados y vuelva a intentarlo. Si el problema persiste comuniquese telefóicamente a ${CONSULTA}`
           );
       if (solicitante.telephone!== telefono)

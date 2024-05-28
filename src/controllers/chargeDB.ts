@@ -5,7 +5,6 @@ import SysAdmin from "../models/systemAdmin";
 import Medico from "../models/medico";
 import Sector from "../models/sector";
 import Employee from "../models/empleado";
-import { LastMonthInstance } from "twilio/lib/rest/api/v2010/account/usage/record/lastMonth";
 const {
   sysAdmin,
   admins,

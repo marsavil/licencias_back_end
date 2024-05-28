@@ -1,37 +1,31 @@
 import { Request, Response } from "express";
 import * as bcrypt from "bcrypt";
-const { Empleado, Admin, Medico } = require("../db");
+import Employee from "../models/empleado";
+import Admin from "../models/admin"; 
+import Medico from "../models/medico"; 
 const ROUNDS = Number(process.env.ROUNDS);
 
 const sesion = {
   login : async function (req: Request, res: Response) {
-    console.log("entró")
     try {
+      console.log("entró")
       const { dni, password, name } = req.body;
       if ( !dni && !name ) return res.status(400).send("Debe identificarse para poder proseguir")
       if( !password ) return res.status(400).send("Debe ingresar una contraseña")
       if ( dni ) {
-        const medico = await Medico.findOne({
-          where: {
-            dni,
-          },
-        });
-        const empleado = await Empleado.findOne({
-          where: {
-            dni,
-          },
-        });
-        if ( medico ) {
-          const passwordMatch = await bcrypt.compare(password, medico.password)
+        const medico = await Medico.find({ dni });
+        const empleado = await Employee.find({ dni });
+        if ( medico.length ) {
+          const passwordMatch = await bcrypt.compare(password, medico[0].password)
           if( passwordMatch ) {
-            return res.status(200).send(medico)
+            return res.status(200).send({message: `Usted se encuentra loggeado como ${medico[0].name} ${medico[0].surname}`, data: medico[0]})
           }else {
             return res.status(400).send("Contraseña de médico incorrecta")
           }
-        } else if ( empleado) {
-          const passwordMatch = await bcrypt.compare(password, empleado.password)
+        } else if ( empleado.length ) {
+          const passwordMatch = await bcrypt.compare(password, empleado[0].password)
           if ( passwordMatch ) {
-            return res.status(200).send(empleado)
+            return res.status(200).send({message: `Usted se encuentra loggeado como ${empleado[0].name} ${empleado[0].surname}`, data: empleado[0]})
           } else {
             return res.status(400).send("Contraseña de empleado incorrecta")
           }
@@ -40,15 +34,11 @@ const sesion = {
         }
       }
       if ( name ) {
-        const admin = await Admin.findOne({
-          where: {
-            name
-          }
-        })
-        if( admin ){
-          const passwordMatch = await bcrypt.compare(password, admin.password)
+        const admin = await Admin.find({ name })
+        if( admin.length ){
+          const passwordMatch = await bcrypt.compare(password, admin[0].password)
           if ( passwordMatch ) {
-            return res.status(200).send(admin)
+            return res.status(200).send({message: `Ahora esta loggeado como administrador, bajo el id ${admin[0]._id} `, data: admin[0]})
           } else {
             return res.status(400).send("Contraseña de administrador incorrecta")
           } 
