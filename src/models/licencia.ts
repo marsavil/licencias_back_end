@@ -34,7 +34,8 @@ const permitSchema = new mongoose.Schema({
     },
     validez:{
       type: String,
-      enum: ["24", "48", "72"], // según propositos de la empresa,
+      enum: ["N/A","24", "48", "72"], // según propositos de la empresa,
+      default: "N/A"
     },
     derivacion:{
       type: Boolean,

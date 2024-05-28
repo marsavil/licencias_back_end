@@ -124,5 +124,61 @@ const licencias = {
       return res.status(500).send(error.message)
     }
   },
+  evaluar: async function (req: Request, res: Response) {
+    try {
+        const { licencia, medico, cobertura, resolucion } = req.body;
+        const hours = Number(cobertura);
+
+        if (!licencia) {
+            return res.status(400).send("Se requiere el ID de la licencia");
+        }
+
+        const licenciaDB = await Permit.findById(licencia);
+        if (!licenciaDB) {
+            return res.status(404).send("Licencia no encontrada");
+        }
+
+        const empleado = await Employee.findById(licenciaDB.empleadoId);
+        if (!empleado) {
+            return res.status(404).send("Empleado no encontrado");
+        }
+
+        // Verificar que `licenciaDB.solicitada` sea una fecha válida
+        const fechaSolicitud = new Date(licenciaDB.solicitada);
+        if (isNaN(fechaSolicitud.getTime())) {
+            return res.status(500).send("Error: Fecha de solicitud no válida");
+        }
+
+        // Calcular la fecha de alta médica
+        const alta = new Date(fechaSolicitud);
+        alta.setHours(alta.getHours() + hours);
+
+        // Verificar si `alta` es una fecha válida antes de asignarla
+        if (isNaN(alta.getTime())) {
+            console.log("Error: Fecha de alta médica no válida", alta);
+            return res.status(500).send("Error: Fecha de alta médica no válida");
+        }
+
+        licenciaDB.medicoId = medico;
+        licenciaDB.revisada = Date.now();
+        licenciaDB.otorgada = resolucion;
+        licenciaDB.validez = cobertura;
+
+        // Asignar `alta` a `medicalReleaseDate` solo si `alta` es una fecha válida
+        console.log("Fecha de alta a asignar:", alta);
+        empleado.medicalReleaseDate = isNaN(alta.getTime()) ? null : alta;
+
+        await licenciaDB.save();
+        await empleado.save();
+
+        return res.status(200).send({ acción: `Licencia ${licenciaDB._id} evaluada`, data: licenciaDB });
+    } catch (error: any) {
+        console.log("Error al evaluar la licencia:", error);
+        return res.status(500).send({ message: error.message });
+    }
+}
+
+
+
 };
 export default licencias;

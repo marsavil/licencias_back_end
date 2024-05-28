@@ -4,6 +4,6 @@ const router = Router();
 
 router.post('/', licencias.cargar);
 router.get('/', licencias.ver);
-//router.put('/', close);
+router.put('/', licencias.evaluar);
 
 export default router;

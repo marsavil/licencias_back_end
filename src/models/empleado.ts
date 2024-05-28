@@ -11,6 +11,10 @@ const employeeSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "Sector",
   },
+  medicalReleaseDate: { 
+    type: Date,
+    default: Date.now()
+  },
   permits: [
     {
       type: mongoose.Schema.Types.ObjectId,
