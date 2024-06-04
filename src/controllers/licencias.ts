@@ -77,7 +77,7 @@ const licencias = {
       const nuevaDocumentacion = await Document.create({
         path: documentacion,
       });
-      const documentDB = await Document.find({ path:  documentacion})
+      //const documentDB = await Document.find({ path:  documentacion})
       console.log("guardo la documentacion", nuevaDocumentacion);
       const nuevaLicencia = await Permit.create({
         empleadoId: solicitante._id,
@@ -85,11 +85,14 @@ const licencias = {
         solicitada: new Date(),
         direccion,
         coordenadas,
-        documentacionId: documentDB[0]._id,
+        documentacionId: nuevaDocumentacion._id,
       });
-      const licenciaDB = await Permit.find({documentacionId: documentDB[0]._id})
-      documentDB[0].licenciaID = licenciaDB[0]._id;
-      documentDB[0].save();
+      // const licenciaDB = await Permit.find({documentacionId: documentDB[0]._id})
+      const licenciaDB = await Permit.find({documentacionId:nuevaDocumentacion._id})
+      // documentDB[0].licenciaID = licenciaDB[0]._id;
+      nuevaDocumentacion.licenciaID = licenciaDB[0]._id;
+      // documentDB[0].save();
+      nuevaDocumentacion.save()
       solicitante.telephone = telefono;
       solicitante.permits.push(licenciaDB[0]._id)
       solicitante.save();

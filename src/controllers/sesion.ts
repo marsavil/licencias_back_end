@@ -3,6 +3,8 @@ import * as bcrypt from "bcrypt";
 import Employee from "../models/empleado";
 import Admin from "../models/admin"; 
 import Medico from "../models/medico"; 
+import token from  "../config/jwt.config"
+const { getToken } = token
 const ROUNDS = Number(process.env.ROUNDS);
 
 const sesion = {
@@ -17,15 +19,17 @@ const sesion = {
         const empleado = await Employee.find({ dni });
         if ( medico.length ) {
           const passwordMatch = await bcrypt.compare(password, medico[0].password)
+          const token = getToken(medico[0])
           if( passwordMatch ) {
-            return res.status(200).send({message: `Usted se encuentra loggeado como ${medico[0].surname} ${medico[0].surname}`, data: medico[0]})
+            return res.status(200).send({message: `Usted se encuentra loggeado como ${medico[0].surname} ${medico[0].surname}`, data: medico[0], token})
           }else {
             return res.status(400).send("Contraseña de médico incorrecta")
           }
         } else if ( empleado.length ) {
           const passwordMatch = await bcrypt.compare(password, empleado[0].password)
+          const token = getToken(empleado[0])
           if ( passwordMatch ) {
-            return res.status(200).send({message: `Usted se encuentra loggeado como ${empleado[0].surname} ${empleado[0].surname}`, data: empleado[0]})
+            return res.status(200).send({message: `Usted se encuentra loggeado como ${empleado[0].surname} ${empleado[0].surname}`, data: empleado[0], token})
           } else {
             return res.status(400).send("Contraseña de empleado incorrecta")
           }
@@ -35,10 +39,11 @@ const sesion = {
       }
       if ( surname ) {
         const admin = await Admin.find({ surname })
+        const token = getToken(admin[0])
         if( admin.length ){
           const passwordMatch = await bcrypt.compare(password, admin[0].password)
           if ( passwordMatch ) {
-            return res.status(200).send({message: `Ahora esta loggeado como administrador, bajo el id ${admin[0]._id} `, data: admin[0]})
+            return res.status(200).send({message: `Ahora esta loggeado como administrador, bajo el id ${admin[0]._id} `, data: admin[0], token})
           } else {
             return res.status(400).send("Contraseña de administrador incorrecta")
           } 

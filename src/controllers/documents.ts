@@ -16,10 +16,8 @@ const documents = {
         }
         res.status(200).send({licencia: licenciaDB, empleado: employee, documento: documentacion[0]})
       }
-      if ( !licencia )
-        return res
-        .status(400)
-        .send('Debe ingresar un id de una licencia para poder un documento')
+      const documentos = await Document.find();
+      return res.status(200).send(documentos)
     } catch (error:any) {
       res.status(500).send(error.message)
     }

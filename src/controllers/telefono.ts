@@ -27,10 +27,10 @@ const telefono = {
   },
   verificacion: async function (req: Request, res: Response) {
     // verifica el código ingresado por el usuario y lo coteja con en previamente enviado
+    console.log("entro")
     const { code, phone } = req.body;
     try {
       if (code) {
-        console.log(code);
         client.verify.v2
           .services(SERVICE_SID)
           .verificationChecks.create({ to: phone, code })
@@ -41,7 +41,7 @@ const telefono = {
         res.status(400).send("Debe ingresar el código que recibio por SMS");
       }
     } catch (error: any) {
-      return res.status(500).send(error.message);
+      return res.status(500).send({message:"Este es el error que se esta mostrando",error:error.message});
     }
   },
 };
